@@ -12,6 +12,7 @@
 #include "../includes/baker.h"
 #include "../includes/datastructs.h"
 #include "../includes/PRINT.h"
+#include "../includes/logger.h"
 
 using namespace std;
 
@@ -87,6 +88,23 @@ void audit_results() {
 int main()
 {
 	//TODO your code here
+//	Logger l("test.txt");
+//	thread log1(&Logger::log, &l, "log this \n");
+//	thread log2(&Logger::log, &l, "log this again \n");
+//
+//	log1.join();
+//	log2.join();
+
+
+	thread t(doWaiter, 1, "in3.txt");
+	thread t2(doBaker, 1);
+	thread t3(doBaker, 2);
+
+	t.join();
+	t2.join();
+	t3.join();
+
+	audit_results();
 	return SUCCESS;
 }
 
