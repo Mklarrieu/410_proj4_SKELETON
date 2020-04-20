@@ -40,19 +40,24 @@ void Baker::bake_and_box(ORDER &anOrder) {
 
 void Baker::beBaker() {
 	while(true){
+		{
 		unique_lock<mutex> lck(mutex_order_inQ);
-		while(!b_WaiterIsFinished){
-			cv_order_inQ.wait(lck);
+		if(!b_WaiterIsFinished){
+		cv_order_inQ.wait(lck);
 		}
-
-
+		}
 		if(!order_in_Q.empty()){
+			mutex_order_inQ.lock();
 			ORDER myorder = order_in_Q.front();
 			order_in_Q.pop();
-			lck.unlock();
+			mutex_order_inQ.unlock();
+
 			bake_and_box(myorder);
+
+			{
 			lock_guard<mutex> lock(mutex_order_outQ);
 			order_out_Vector.push_back(myorder);
+			}
 		}
 		else{
 			break;
